@@ -29,6 +29,8 @@ export default OneChatScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState();
   const [socketConnected, setSocketConnected] = useState(false);
+  const [typing, setTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   const [selectedChat, setSelectedChat] = useState();
   const [loggedUserId, setLoggedUserId] = useState();
@@ -74,7 +76,9 @@ export default OneChatScreen = ({ navigation }) => {
     async function setupSocket() {
       socket = io(ENDPOINT);
       socket.emit("setup", await AsyncStorage.getItem("LoggedUserId"));
-      socket.on("connection", () => setSocketConnected(true));
+      socket.on("connected", () => setSocketConnected(true));
+      socket.on("typing", () => setIsTyping(true));
+      socket.on("stop typing", () => setIsTyping(false));
     }
     setupSocket();
   }, []);
@@ -112,6 +116,7 @@ export default OneChatScreen = ({ navigation }) => {
   const sendMessage = async () => {
     token = await AsyncStorage.getItem("LoggedUserToken");
     if (newMessage) {
+      socket.emit("stop typing", JSON.parse(selectedChat)._id);
       try {
         const config = {
           headers: {
@@ -146,6 +151,27 @@ export default OneChatScreen = ({ navigation }) => {
     setNewMessage(value);
 
     // Typing Indicator Logic
+    if (!socketConnected) return;
+
+    if (!typing) {
+      setTyping(true);
+      console.log("typing now");
+      socket.emit("typing", JSON.parse(selectedChat)._id);
+    }
+    let lastTypingTime = new Date().getTime();
+    let timerLength = 3000;
+    setTimeout(async () => {
+      let timeNow = new Date().getTime();
+      let timeDiff = timeNow - lastTypingTime;
+
+      if (timeDiff >= timerLength && typing) {
+        socket.emit("stop typing", JSON.parse(selectedChat)._id);
+        console.log(JSON.parse(selectedChat)._id);
+        console.log("stopping typing now");
+
+        setTyping(false);
+      }
+    }, timerLength);
   };
 
   return (
@@ -159,7 +185,7 @@ export default OneChatScreen = ({ navigation }) => {
         justifyContent="center"
       >
         <Avatar size="md" bg="black">
-          {username ? username.charAt(0) : 'x'}
+          {username ? username.charAt(0) : "x"}
         </Avatar>
         <Heading marginLeft={2} fontSize={30}>
           {selectedChat ? username : <></>}
@@ -203,7 +229,15 @@ export default OneChatScreen = ({ navigation }) => {
           )}
         </BlurView>
       </View>
+
       <BlurView height="8%" intensity={20} tint="dark" overflow="hidden">
+        {isTyping ? (
+          <View>
+            <Text>Loading...</Text>
+          </View>
+        ) : (
+          <></>
+        )}
         <Input
           isRequired
           mx={3}

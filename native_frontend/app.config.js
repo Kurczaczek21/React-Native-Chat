@@ -1,7 +1,12 @@
 import "dotenv/config";
 
 export default {
-  expo: {
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "55ba4b56-c98c-4658-8042-8a6c58d27c93"
+      }
+    },
     name: "Gigachat",
     slug: "Gigachat",
     version: "1.0.0",
@@ -17,11 +22,9 @@ export default {
     ios: {
       supportsTablet: true,
     },
-    android: {
-      adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
-        backgroundColor: "#ffffff",
-      },
+    "android": {
+      "package": "com.yourcompany.yourappname",
+      "versionCode": 1
     },
     web: {
       favicon: "./assets/favicon.png",
