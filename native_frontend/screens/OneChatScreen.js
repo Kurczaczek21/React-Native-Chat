@@ -19,6 +19,8 @@ import ScrollableChat from "./ScrollableChat";
 import Icon from "react-native-vector-icons/Ionicons";
 import io from "socket.io-client";
 import { BlurView } from "expo-blur";
+import LottieView from "lottie-react-native";
+import animationData from "../animations/typing.json";
 
 // const ENDPOINT = "http://192.168.43.229:5000";
 const ENDPOINT = "https://nine82hwf9h9398fnfy329y2n92y239cf.onrender.com/";
@@ -31,6 +33,14 @@ export default OneChatScreen = ({ navigation }) => {
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
 
   const [selectedChat, setSelectedChat] = useState();
   const [loggedUserId, setLoggedUserId] = useState();
@@ -187,9 +197,16 @@ export default OneChatScreen = ({ navigation }) => {
         <Avatar size="md" bg="black">
           {username ? username.charAt(0) : "x"}
         </Avatar>
-        <Heading marginLeft={2} fontSize={30}>
-          {selectedChat ? username : <></>}
-        </Heading>
+        <View marginLeft={2} display="flex" flexDir="column">
+          <Heading fontSize={30}>{selectedChat ? username : <></>}</Heading>
+          {isTyping ? (
+            <View position="relative">
+              <Text>typing...</Text>
+            </View>
+          ) : (
+            <></>
+          )}
+        </View>
       </View>
       <View
         display="flex"
@@ -231,13 +248,6 @@ export default OneChatScreen = ({ navigation }) => {
       </View>
 
       <BlurView height="8%" intensity={20} tint="dark" overflow="hidden">
-        {isTyping ? (
-          <View>
-            <Text>Loading...</Text>
-          </View>
-        ) : (
-          <></>
-        )}
         <Input
           isRequired
           mx={3}
