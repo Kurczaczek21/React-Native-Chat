@@ -4,8 +4,8 @@
 Gigachat is a collaborative effort by Bartłomiej Czech, Mateusz Warzecha and Piotr Lehmann. It is a modern and user-friendly chat application developed as a university project, using React Native. It showcases our skills in mobile app development and demonstrates our ability to work as a group.
 
 ## Demonstration:
-You can download the app using the following link: 
-Or, alternatively, take a look at our presentation of the app: https://prezi.com/p/pryu8jpk50wu/react-native-app/
+- You can download the app using the following link: https://easyupload.io/egqdkj
+- Or, alternatively, take a look at our presentation of the app: https://prezi.com/p/pryu8jpk50wu/react-native-app/
 
 ## Key Features
 - **Real-Time Messaging:** Gigachat allows users to engage in real-time conversations, enabling seamless communication with friends and colleagues. You can even see that the other person is typing!
